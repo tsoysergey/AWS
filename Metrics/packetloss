@@ -1,0 +1,11 @@
+#!/bin/sh
+remote_ip=
+ping_count=5
+while true; do
+  packet_loss=$(ping -c $ping_count $remote_ip | grep 'packet loss' | \
+                sed -e 's/^.*received, //' -e 's/% packet loss.*//')
+  Amazon CloudWatch put-metric-data --namespace NetOps \
+    --metric-name PacketLoss --unit Percent --value "$packet_loss" \
+    --dimensions RemoteIp="$remote_ip";
+  sleep 60;
+done;
