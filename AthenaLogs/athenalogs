@@ -1,0 +1,54 @@
+***********************
+****Create DB first****
+***********************
+CREATE DATABASE IF NOT EXISTS cloudtraildb
+    COMMENT 'Log analysis'
+    LOCATION '$S3PATH'
+    WITH DBPROPERTIES ('Creator'='', 'Company'='', 'Created'='2021')
+    
+***********************
+
+
+***********************
+*****Create Table******
+***********************
+
+CREATE EXTERNAL TABLE cloudtraildb.cloudtrail_logs (
+  eventversion STRING,
+  useridentity STRUCT<type:STRING,principalid:STRING,arn:STRING,accountid:STRING,invokedby:STRING,accesskeyid:STRING,username:STRING,sessioncontext:struct<attributes:STRUCT<mfaauthenticated:STRING,creationdate:STRING>,sessionissuer:struct<type:STRING,principalid:STRING,arn:STRING,accountid:STRING,username:STRING>>>,
+  eventtime STRING,
+  eventsource STRING,
+  eventname STRING,
+  awsregion STRING,
+  sourceipaddress STRING,
+  useragent STRING,
+  errorcode STRING,
+  errormessage STRING,
+  requestparameters STRING,
+  responseelements STRING,
+  additionaleventdata STRING,
+  requestid STRING,
+  eventid STRING,
+  resources ARRAY<STRUCT<ARN:STRING,accountid:STRING,type:STRING>>,
+  eventtype STRING,
+  apiversion STRING,
+  readonly STRING,
+  recipientaccountid STRING,
+  serviceeventdetails STRING,
+  sharedeventid STRING,
+  vpcendpointid STRING)
+ROW FORMAT SERDE 
+  'com.amazon.emr.hive.serde.CloudTrailSerde' 
+STORED AS INPUTFORMAT 
+  'com.amazon.emr.cloudtrail.CloudTrailInputFormat' 
+OUTPUTFORMAT 
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  '$S3PATH'
+  
+*********************
+
+***************************************
+*****New events may not be shown******* 
+*****immediatedly due to latency*******
+***************************************
