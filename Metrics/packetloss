@@ -9,3 +9,4 @@ while true; do
     --dimensions RemoteIp="$remote_ip";
   sleep 60;
 done;
+// 
